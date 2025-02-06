@@ -50,9 +50,10 @@ class LoginView(views.APIView):
         user = authenticate(username=username, password=password)
         if user:
             if user.is_active:
-                token = Token.objects.get_or_create(user=user)
+                #token = Token.objects.get_or_create(user=user)
                 login(request,user)
-                return JsonResponse({"token": token.key}, status=status.HTTP_200_OK)
+                # return JsonResponse({"token": token.key}, status=status.HTTP_200_OK)
+                return JsonResponse({"Done":"success"},status=status.HTTP_200_OK)
             else:
                 return JsonResponse({"error": "User account is inactive."},status=status.HTTP_403_FORBIDDEN,)
         else:
