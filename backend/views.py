@@ -10,6 +10,8 @@ from rest_framework.authtoken.models import Token
 from .models import UserProfileModel
 from .serializers import ProfileSerializer
 
+import json
+
 
 # Create your views here.
 
@@ -36,8 +38,11 @@ class LoginView(views.APIView):
     permission_classes=[]
 
     def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        # username = request.data.get('username')
+        # password = request.data.get('password')
+        data=json.loads(request.body)
+        username=data.get('username')
+        password=data.get('password')
 
         if not username or not password:
             return JsonResponse({"error": "Username and password are required."},status=status.HTTP_400_BAD_REQUEST)
