@@ -6,7 +6,7 @@ export const Home = () => {
   const [User, setUser] = useState("hi")
 
   const user = async () =>{
-    await axios.get("http://127.0.0.1:8000/profile/").then(
+    await axios.get("http://127.0.0.1:8000/").then(
       (response) => {
         console.log(response.data);
         setUser(response.data.Hello);
