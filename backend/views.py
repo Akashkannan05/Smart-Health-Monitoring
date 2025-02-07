@@ -6,7 +6,7 @@ from django.http import JsonResponse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import generics,views,serializers,status
+from rest_framework import generics,views,serializers,status,permissions
 
 
 from .models import UserProfileModel
@@ -20,6 +20,7 @@ class Home(APIView):
 class ProfileDetailView(generics.RetrieveAPIView):
     queryset=UserProfileModel.objects.all()
     serializer_class=ProfileSerializer
+    permission_classes=[permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user=self.request.user
@@ -36,6 +37,9 @@ class LoginView(views.APIView):
 
     permission_classes=[]
 
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
     def post(self, request, *args, **kwargs):
         # username = request.data.get('username')
         # password = request.data.get('password')
