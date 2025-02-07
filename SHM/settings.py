@@ -152,3 +152,9 @@ REST_FRAMEWORK={
             'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.LimitOffsetPagination',
             'PAGE_SIZE':5
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Store sessions in the database
+SESSION_COOKIE_AGE = 86400  # 1 day
+SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS
+SESSION_SAVE_EVERY_REQUEST = True  # Save session on every request
+
