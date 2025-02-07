@@ -1,16 +1,16 @@
 import json
 
-from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.contrib.auth import login ,logout,authenticate
 from django.http import JsonResponse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics,views,serializers,status
-from rest_framework.authtoken.models import Token
+
 
 from .models import UserProfileModel
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer,PaitentRegister
 # Create your views here.
 
 class Home(APIView):
@@ -26,8 +26,9 @@ class ProfileDetailView(generics.RetrieveAPIView):
         if user is None or user.is_anonymous:
             return JsonResponse({"Login":"Not_logined"},status=status.HTTP_403_FORBIDDEN)
         data=UserProfileModel.objects.get(User=user)
-        serilaize=ProfileSerializer(data)
-        return JsonResponse(serilaize.data,status=200)
+        serilaize=ProfileSerializer(data).data
+        serilaize['Login']="success"
+        return JsonResponse(serilaize,status=200)
     
 ProfileDetailViewClass=ProfileDetailView.as_view()
 
@@ -90,9 +91,16 @@ ProfileUpdateClass=ProfileUpdate.as_view()
 
 class paitentRegister(generics.CreateAPIView):
 
-    queryset=UserProfileModel.objects.all()
-    serializer_class=ProfileSerializer
+    queryset=User.objects.all()
+    serializer_class=PaitentRegister
     permission_classes=[]
 
-    
+    def perform_create(self, serializer):
+        username=serializer.validated_data.get("username")
+        qs=User.objects.filter(username=username)
+        if qs.exists():
+            return Response({"Register":"Username already exisit"},status=status.HTTP_403_FORBIDDEN)
+        password=serializer.validated_data.get("password")
+        verify=serializer.validated_data.get()
+        return super().perform_create(serializer)
         
