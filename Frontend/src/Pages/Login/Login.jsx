@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css"
 
 export const Login = () => {
+    const [invalid, setInvalid] = useState(false)
         const [formData, setFormData] = useState({
             username: "",
             password: "",
         });
+        const navigate = useNavigate(); // Ensure it's inside the component
+
     
         // Handle input changes
         const handleChange = (e) => {
@@ -16,37 +20,66 @@ export const Login = () => {
             });
         };
     
-        // Handle form submission
-        // const handleSubmit = async (e) => {
-        //     e.preventDefault();
-        //     try {
-        //         const response = await axios.post("http://127.0.0.1:8000/login/", formData, {
-        //             headers: {
-        //                 "Content-Type": "application/json"
-        //             }
-        //         });
-        //         console.log(response.data);
-        //         alert("Data sent successfully!");
-        //     } catch (error) {
-        //         console.error("Error sending data:", error);
-        //         alert("error")
-        //     }
-        // };
 
         const handleSubmit = async (e) => {
             e.preventDefault();
-            try {
-                const response = await axios.post("http://127.0.0.1:8000/login/", formData, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                });
-                console.log(response.data);
-                alert("Data sent successfully!");
-            } catch (error) {
-                console.error("Error sending data:", error);
-                alert("Error: " + (error.response?.data?.error || "Unknown error"));
+
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/login/", formData, {
+            headers: { "Content-Type": "application/json" },
+            });
+
+            console.log("Response Data:", response.data); // Check what is returned
+            alert("Data sent successfully!");
+
+            if (response.status === 200) { // Check if request was successful
+            console.log("Redirecting to:", response.data.redirect);
+            navigate(response.data.redirect); // Navigate to profile
+            } else {
+            setError(response.data.error || "Something went wrong.");
+            console.error("Error:", response.data.error);
             }
+        } catch (error) {
+            console.error("Error sending data:", error);
+            setInvalid(true)
+        }
+
+            
+                
+            
+            // const handleSubmit = async (e) => {
+            //     e.preventDefault();
+              
+            //     try {
+            //       const response = await fetch("http://127.0.0.1:8000/api/login/", {
+            //         method: "POST",
+            //         headers: {
+            //           "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify({ username, password }),
+            //       });
+              
+            //       const data = await response.json();
+            //       console.log("Response Data:", data);  // Debugging line
+            //       console.log("Response Data:", data);  // Debugging line
+            //       console.log("Response Data:", response.data.Login);  // Debugging line
+              
+            //       if (response.data.Login == "success") {
+            //         console.log("Redirecting to:", data.redirect);  // Debugging line
+            //         navigate("/profile");
+            //       } else {
+            //         setError(data.error);
+            //         console.error("Error:", data.error);  // Debugging line
+            //       }
+            //     } catch (error) {
+            //       console.error("Fetch error:", error);
+            //       setError("Something went wrong.");
+            //     }
+            //     finally{
+            //         console.log("finished")
+            //     }
+            // }
+
         };
         
     
@@ -60,7 +93,11 @@ export const Login = () => {
                         <p className='text-center px-3 m-1 mb-5'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque, illum.</p>
                         <h2>Login</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="pt-4 ps-5 pe-5 d-flex flex-column align-items-center">    
+                            <div className="pt-2 ps-5 pe-5 d-flex flex-column align-items-center">   
+                                {
+                                    invalid && 
+                                    <p className=' alert alert-danger m-2 p-1 ' style={{width:"100%"}}>Invalid username or password</p>
+                                } 
                                 <input
                                     type="text"
                                     name="username"
