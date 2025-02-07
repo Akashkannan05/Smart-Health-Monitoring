@@ -15,7 +15,7 @@ from .serializers import ProfileSerializer
 
 class Home(APIView):
     def get(self,request):
-        return JsonResponse({"Hello":"Content"}) 
+        return JsonResponse({"Hello":"Content"})    
     
 class ProfileDetailView(generics.RetrieveAPIView):
     queryset=UserProfileModel.objects.all()
@@ -51,7 +51,7 @@ class LoginView(views.APIView):
                 #token = Token.objects.get_or_create(user=user)
                 login(request,user)
                 # return JsonResponse({"token": token.key}, status=status.HTTP_200_OK)
-                return JsonResponse({"Login":"success"},status=status.HTTP_200_OK)
+                return JsonResponse({"Login":"success","redirect":"/profile"},status=status.HTTP_200_OK)
             else:
                 return JsonResponse({"Login": "User account is inactive."},status=status.HTTP_403_FORBIDDEN,)
         else:
@@ -88,3 +88,11 @@ class ProfileUpdate(generics.UpdateAPIView):
 
 ProfileUpdateClass=ProfileUpdate.as_view()
 
+class paitentRegister(generics.CreateAPIView):
+
+    queryset=UserProfileModel.objects.all()
+    serializer_class=ProfileSerializer
+    permission_classes=[]
+
+    def create(self, request, *args, **kwargs):
+        
