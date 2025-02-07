@@ -43,7 +43,7 @@ class LoginView(views.APIView):
         password=data.get('password')
 
         if not username or not password:
-            return JsonResponse({"error": "Username and password are required."},status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"Login": "Username and password are required."},status=status.HTTP_400_BAD_REQUEST)
 
         user = authenticate(username=username, password=password)
         if user:
@@ -51,13 +51,21 @@ class LoginView(views.APIView):
                 #token = Token.objects.get_or_create(user=user)
                 login(request,user)
                 # return JsonResponse({"token": token.key}, status=status.HTTP_200_OK)
-                return JsonResponse({"error":"success"},status=status.HTTP_200_OK)
+                return JsonResponse({"Login":"success"},status=status.HTTP_200_OK)
             else:
-                return JsonResponse({"error": "User account is inactive."},status=status.HTTP_403_FORBIDDEN,)
+                return JsonResponse({"Login": "User account is inactive."},status=status.HTTP_403_FORBIDDEN,)
         else:
-            return JsonResponse({"error": "Invalid username or password."},status=status.HTTP_401_UNAUTHORIZED,)
+            return JsonResponse({"Login": "Invalid username or password."},status=status.HTTP_401_UNAUTHORIZED,)
 
 LoginViewClass=LoginView.as_view()
+
+class LogoutView(views.APIView):
+    
+    def get(self, request, format=None):
+        logout(request)
+        return JsonResponse({"Logout":"Success"},status=status.HTTP_200_OK)
+
+LogoutViewClass=LoginView.as_view()
 
 class ProfileUpdate(generics.UpdateAPIView):
     queryset=UserProfileModel.objects.all()
@@ -68,11 +76,12 @@ class ProfileUpdate(generics.UpdateAPIView):
         user=self.request.user
 
         if user is None or user.is_anonymous:
-            return Response({"Login":"Login Required"},status=status.HTTP_403_FORBIDDEN)
+            return JsonResponse({"Login":"Login Required"},status=status.HTTP_403_FORBIDDEN)
         
         data=UserProfileModel.objects.get(User=user)
-        serialize=ProfileSerializer(data)
-        return Response(serialize.data,status=status.HTTP_200_OK)
+        serialize=ProfileSerializer(data).data
+        serialize['Login']="success"
+        return JsonResponse(serialize,status=status.HTTP_200_OK)
     
     def perform_update(self, serializer):
         return super().perform_update(serializer)
