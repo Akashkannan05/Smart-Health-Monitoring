@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from "react-router";
 import "./Navbar.css"
 
 export const Navbar = () => {
@@ -35,6 +36,9 @@ export const Navbar = () => {
         </li>
       </ul>
     </div>
+    <NavLink to="/login" end>
+      <button className='btn btn-primary px-4 rounded-pill'>Login</button>
+    </NavLink>
   </div>
 </nav>
     </>
