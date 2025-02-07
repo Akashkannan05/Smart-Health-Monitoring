@@ -1,7 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import "./Profile.css"
 
 export const Profile = () => {
+  const [medicalId, setMedicalId] = useState("medical id")
+  const [username, setUsername] = useState("medical id")
+  const [gender, setGender] = useState("medical id")
+  const [age, setAge] = useState("medical id")
+  const [dob, setDob] = useState("medical id")
+  const [phoneno, setPhoneNo] = useState("medical id")
+
+  const fetchData = async (e) => {
+    try{
+      const response = await fetch('http://127.0.0.1:8000/profile/')
+      const data = await response.json()
+      console.log(data)
+    }
+    catch(error){
+      console.log(error)
+      }
+  }
+  useEffect(()=>{
+    fetchData()
+  },[])
+
   return (
     <>
     <div className="profile">
@@ -19,11 +40,11 @@ export const Profile = () => {
                     </div>
                   </div>
                   <div className="col-12 col-md-6 p-4">
-                    <p className='p-2 m-0'><span className='fw-bolder'>Medical ID:</span> XXXXXXXXXX</p>
-                    <p className='p-2 m-0'><span className='fw-bolder'>Username:</span> XXXXXXX</p>
-                    <p className='p-2 m-0'><span className='fw-bolder'>Gender:</span> XXXX</p>
-                    <p className='p-2 m-0'><span className='fw-bolder'>Age:</span> XX</p>
-                    <p className='p-2 m-0'><span className='fw-bolder'>Date of Birth:</span> XX XX XXXX</p>
+                    <p className='p-2 m-0'><span className='fw-bolder'>Medical ID:</span> {medicalId}</p>
+                    <p className='p-2 m-0'><span className='fw-bolder'>Username:</span> {username}</p>
+                    <p className='p-2 m-0'><span className='fw-bolder'>Gender:</span> {gender}</p>
+                    <p className='p-2 m-0'><span className='fw-bolder'>Age:</span> {age}</p>
+                    <p className='p-2 m-0'><span className='fw-bolder'>Date of Birth:</span>{age}</p>
                   </div>
                 </div>
               </div>
@@ -81,7 +102,7 @@ export const Profile = () => {
               <div className="col-12 rounded" style={{border:"2px solid blue"}}>
                 <p className='p-0 m-0 fw-bolder'>Presonal details</p>
                 <hr />
-                <p className='p-2 m-0 mb-4'><span className='fw-bolder'>Phone number:</span> XXXXXXXXXX</p>
+                <p className='p-2 m-0 mb-4'><span className='fw-bolder'>Phone number:</span> {phoneno} </p>
                 <button className='btn btn-primary mb-4' style={{width:"100%"}}>Edit profile</button>
               </div>
             </div>
