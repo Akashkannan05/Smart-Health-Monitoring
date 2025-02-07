@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.contrib.auth import login ,logout,authenticate
 from django.http import JsonResponse
@@ -9,10 +11,6 @@ from rest_framework.authtoken.models import Token
 
 from .models import UserProfileModel
 from .serializers import ProfileSerializer
-
-import json
-
-
 # Create your views here.
 
 class Home(APIView):
@@ -53,10 +51,31 @@ class LoginView(views.APIView):
                 #token = Token.objects.get_or_create(user=user)
                 login(request,user)
                 # return JsonResponse({"token": token.key}, status=status.HTTP_200_OK)
-                return JsonResponse({"Done":"success"},status=status.HTTP_200_OK)
+                return JsonResponse({"error":"success"},status=status.HTTP_200_OK)
             else:
                 return JsonResponse({"error": "User account is inactive."},status=status.HTTP_403_FORBIDDEN,)
         else:
             return JsonResponse({"error": "Invalid username or password."},status=status.HTTP_401_UNAUTHORIZED,)
 
 LoginViewClass=LoginView.as_view()
+
+class ProfileUpdate(generics.UpdateAPIView):
+    queryset=UserProfileModel.objects.all()
+    serializer_class=ProfileSerializer
+    lookup_field='MedicalID'
+
+    def get(self, request, *args, **kwargs):
+        user=self.request.user
+
+        if user is None or user.is_anonymous:
+            return Response({"Login":"Login Required"},status=status.HTTP_403_FORBIDDEN)
+        
+        data=UserProfileModel.objects.get(User=user)
+        serialize=ProfileSerializer(data)
+        return Response(serialize.data,status=status.HTTP_200_OK)
+    
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
+
+ProfileUpdateClass=ProfileUpdate.as_view()
+

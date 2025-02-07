@@ -53,20 +53,24 @@ class UserProfileModel(models.Model):
     MedicalRecord=models.OneToOneField(MedicalRecordModel,on_delete=models.CASCADE,null=True,blank=True)
     QRCode=models.ImageField(null=True,upload_to="QRCode",blank=True)
     ProfilePic=models.ImageField(null=True,blank=True,upload_to="ProfilePic")
+
+
     
     def save(self, *args, **kwargs):
         # super().save(*args, **kwargs)
-        URL=f"http://127.0.0.1:8000/record/{self.MedicalID}"
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(URL)
-        qr.make(fit=True)
-        img = qr.make_image(fill='black', back_color='white')
-        file_name = f'{self.MedicalID}_qr.png'
-        file_path = os.path.join(settings.MEDIA_ROOT, 'QRCode', file_name)
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        img.save(file_path)
-        self.QRCode = f'QRCode/{file_name}'
-        self.MedicalID=generate_MedicalId()
+        if self.MedicalID is None:
+            self.MedicalID=generate_MedicalId()
+        if self.QRCode is None:
+            URL=f"http://127.0.0.1:8000/record/{self.MedicalID}"
+            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr.add_data(URL)
+            qr.make(fit=True)
+            img = qr.make_image(fill='black', back_color='white')
+            file_name = f'{self.MedicalID}_qr.png'
+            file_path = os.path.join(settings.MEDIA_ROOT, 'QRCode', file_name)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            img.save(file_path)
+            self.QRCode = f'QRCode/{file_name}'
         super().save(*args, **kwargs)
 
     def __str__(self):
