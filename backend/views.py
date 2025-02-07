@@ -94,5 +94,5 @@ class paitentRegister(generics.CreateAPIView):
     serializer_class=ProfileSerializer
     permission_classes=[]
 
-    def create(self, request, *args, **kwargs):
+    
         
